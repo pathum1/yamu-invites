@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join YAMU - Plan Amazing Road Trips</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .container {
+            text-align: center;
+            max-width: 400px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        .logo {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #FFA500;
+        }
+        .subtitle {
+            font-size: 18px;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+        .app-icon {
+            width: 80px;
+            height: 80px;
+            margin: 20px auto;
+            background: #FFA500;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+        .message {
+            font-size: 16px;
+            margin: 20px 0;
+        }
+        .store-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+        .store-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            color: white;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            flex: 1;
+            max-width: 150px;
+        }
+        .store-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .opening-text {
+            font-size: 18px;
+            margin: 20px 0;
+            color: #FFE55C;
+        }
+        .spinner {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid #FFA500;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">YAMU</div>
+        <div class="subtitle">Plan Epic Road Trips with Friends</div>
+        
+        <div class="app-icon">🚗</div>
+        
+        <div id="opening" class="opening-text" style="display: none;">
+            <div class="spinner"></div>
+            Opening YAMU...
+        </div>
+        
+        <div id="fallback">
+            <div class="message">
+                <strong>You've been invited to join YAMU!</strong><br>
+                Download the app to start planning amazing road trips together.
+            </div>
+            
+            <div class="store-buttons">
+                <a href="https://apps.apple.com/app/yamu" class="store-btn" id="ios-btn">
+                    App Store
+                </a>
+                <a href="https://play.google.com/store/apps/details?id=com.example.yamu" class="store-btn" id="android-btn">
+                    Play Store
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get invitation ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const invitationId = urlParams.get('invite');
+        
+        if (invitationId) {
+            // Show opening message
+            document.getElementById('opening').style.display = 'block';
+            document.getElementById('fallback').style.display = 'none';
+            
+            // Try to open the app
+            const appUrl = `yamu://invite/${invitationId}`;
+            
+            // Create invisible iframe to trigger app
+            const iframe = document.createElement('iframe');
+            iframe.style.display = 'none';
+            iframe.src = appUrl;
+            document.body.appendChild(iframe);
+            
+            // Also try direct location change
+            setTimeout(() => {
+                window.location.href = appUrl;
+            }, 500);
+            
+            // Fallback to app stores after 3 seconds
+            setTimeout(() => {
+                document.getElementById('opening').style.display = 'none';
+                document.getElementById('fallback').style.display = 'block';
+                
+                // Update store links with campaign tracking
+                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+                const isAndroid = /Android/.test(navigator.userAgent);
+                
+                if (isIOS) {
+                    document.getElementById('android-btn').style.display = 'none';
+                } else if (isAndroid) {
+                    document.getElementById('ios-btn').style.display = 'none';
+                }
+            }, 3000);
+        } else {
+            // No invitation ID, just show download options
+            console.log('No invitation ID found');
+        }
+        
+        // Log for debugging
+        console.log('Invitation ID:', invitationId);
+        console.log('App URL:', `yamu://invite/${invitationId}`);
+    </script>
+</body>
+</html>
